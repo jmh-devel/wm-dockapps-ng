@@ -15,14 +15,17 @@ top-level build. The first CI exercise should build one representative app,
 3. Opened [tsctl issue #1131](https://github.com/tacitness/tsctl/issues/1131)
    for catalog enrollment. `tsctl repos check wm-dockapps-ng` currently reports
    an unknown repo key, so a governed implementation Job cannot start yet.
-4. The saved Fly session is unauthorized. The lab connection and credentials
-   must be restored before pipeline validation or a branch build.
+4. Fly access was restored on 2026-10-02. The existing
+   `ts-concourse-demo-main/verify #2` build succeeded on `learning-lab` for
+   demo commit `f1e02d1`; this verifies the lab path, not this repository.
 5. GitHub Issues are disabled on this repository. The implementation is
    tracked in [ts-concourse-demo issue #3](https://github.com/jmh-devel/ts-concourse-demo/issues/3).
 6. An explicit `codex2` issue-dispatch dry run summarized `codex2` but rendered
    a `codex` Job. [tsctl #1123](https://github.com/tacitness/tsctl/issues/1123)
    tracks this dry-run defect. A live profile mismatch has not been proven;
-   dispatch is held until profile selection can be verified.
+   dispatch is held until profile selection can be verified. The managed issue
+   queue client also needs an approved server URL and machine API capability;
+   neither is configured in the current shell.
 7. The documentation was published in
    [draft PR #1](https://github.com/jmh-devel/wm-dockapps-ng/pull/1).
 

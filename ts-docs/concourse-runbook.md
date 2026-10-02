@@ -11,8 +11,10 @@
 | Tests | No declared `TESTS` or `check_PROGRAMS` found for `wmcalc`; first gate is a compile smoke check. |
 | tsctl | `tsctl repos check wm-dockapps-ng` returned `unknown repo key`. Enrollment tracked in [tsctl #1131](https://github.com/tacitness/tsctl/issues/1131). |
 | GitHub issue tracker | Disabled for this public repository; implementation tracked in [ts-concourse-demo #3](https://github.com/jmh-devel/ts-concourse-demo/issues/3). |
-| Fly | `fly-concourse-lab -t lab status` returned `please login again` / `not authorized`. |
+| Fly | Login restored 2026-10-02; `fly-concourse-lab -t lab status` reports success and the `learning-lab` worker is running. |
+| Lab consumer proof | `ts-concourse-demo-main/verify #2` succeeded on 2026-10-02, fetched demo commit `f1e02d1`, and ran five tests plus its Markdown link check. [Local lab build](http://127.0.0.1:8080/teams/main/pipelines/ts-concourse-demo-main/jobs/verify/builds/2). This does not validate `wm-dockapps-ng`. |
 | tsctl auth dry run | `tsctl agent dispatch tsctl --runner codex --auth-profile codex2 --issue 1131 --mode implement --dry-run` summarized `codex2` but rendered `codex` metadata and legacy Secret selection. [tsctl #1123](https://github.com/tacitness/tsctl/issues/1123) tracks the defect. Live dispatch identity is unproven. |
+| Managed issue queue | `tsctl agent queue ls` reports no approved server configured. This shell has neither `TSCTL_SERVER_URL` nor `TSCTL_API_KEY`; issue dispatch requires both. Do not place the API key in Git or a command argument. |
 
 ## Governed sequence
 
@@ -39,7 +41,7 @@
 
 | Date | PR / commit | Pipeline / build | Result | Notes |
 | --- | --- | --- | --- | --- |
-| 2026-10-02 | [Draft PR #1](https://github.com/jmh-devel/wm-dockapps-ng/pull/1), docs commit `901c9d2` | None | Setup only | Catalog, profile dry run, and Fly authorization pending. |
+| 2026-10-02 | [Draft PR #1](https://github.com/jmh-devel/wm-dockapps-ng/pull/1), docs commit `901c9d2` | Demo `ts-concourse-demo-main/verify #2` | Demo passed | Target catalog, profile dry run, and managed queue access pending. |
 
 ## Safety boundaries
 
