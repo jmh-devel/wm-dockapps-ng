@@ -57,10 +57,10 @@ fly-concourse-lab -t lab resource-versions \
 
 Fly validation returned `looks good`. The job succeeded on 2026-10-02 and
 the Git resource version reported `ref` =
-`ff7e4b7286cb307161ccc47a77f4adea63d81bff`. The temporary pipeline is
-still present so its build history remains visible. Retire it deliberately
-after the governed build pipeline supersedes it; deleting a pipeline removes
-its lab build history.
+`ff7e4b7286cb307161ccc47a77f4adea63d81bff`. The temporary pipeline was
+paused after the successful probe and remains present so its build history is
+visible without continued checks. Retire it deliberately after the governed
+build pipeline supersedes it; deleting a pipeline removes its lab build history.
 
 ## Governed sequence
 
