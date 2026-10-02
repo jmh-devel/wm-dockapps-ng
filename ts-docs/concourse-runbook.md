@@ -39,7 +39,7 @@
 
 | Date | PR / commit | Pipeline / build | Result | Notes |
 | --- | --- | --- | --- | --- |
-| 2026-10-02 | `dev/concourse-ci-lab` at base commit `251e851` | None | Setup only | Catalog and Fly authorization pending. |
+| 2026-10-02 | [Draft PR #1](https://github.com/jmh-devel/wm-dockapps-ng/pull/1), docs commit `901c9d2` | None | Setup only | Catalog, profile dry run, and Fly authorization pending. |
 
 ## Safety boundaries
 

@@ -23,6 +23,8 @@ top-level build. The first CI exercise should build one representative app,
    a `codex` Job. [tsctl #1123](https://github.com/tacitness/tsctl/issues/1123)
    tracks this dry-run defect. A live profile mismatch has not been proven;
    dispatch is held until profile selection can be verified.
+7. The documentation was published in
+   [draft PR #1](https://github.com/jmh-devel/wm-dockapps-ng/pull/1).
 
 These are observed states, not successful CI evidence. Update this list with
 the PR, exact commit, Fly validation result, and Concourse build URL as the
@@ -48,7 +50,8 @@ authority, and this experiment does not deploy anything.
 
 - [ ] Enrollment is published and a `codex` / `codex2` tsctl Job can be admitted.
 - [x] A CI implementation issue is linked here.
-- [ ] The governed Job, PR, and independent review are linked here.
+- [x] A draft PR is linked here.
+- [ ] The governed Job and independent review are linked here.
 - [ ] Pipeline and task files are reviewed with a pinned build image digest.
 - [ ] Fly validates the pipeline and a temporary branch pipeline builds the
       exact PR head commit successfully.
