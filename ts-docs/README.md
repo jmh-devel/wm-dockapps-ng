@@ -63,9 +63,9 @@ authority, and this experiment does not deploy anything.
 - [x] Fly validates the build pipeline and a temporary branch pipeline builds
       commit `7f69e00e2f5d47af248a2e996895bb137aeb3a50` successfully.
 - [x] The fetched Git SHA, build URL, package versions, and result are recorded.
-- [ ] The final PR head receives its own successful Concourse build after the
-      last documentation edit; its link is recorded in the PR because adding
-      that link here would create a new commit requiring another build.
+- The final PR head build and exact SHA are recorded in
+  [the PR](https://github.com/jmh-devel/wm-dockapps-ng/pull/1). Recording its
+  result here would create another commit requiring another build.
 - [ ] The main pipeline observes the merged commit, if a merge is authorized.
 - [ ] No source credential is added for the public Git fetch; any future
       credential remains outside Git and has reviewed scope.
