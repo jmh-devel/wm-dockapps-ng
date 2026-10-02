@@ -7,6 +7,7 @@
 | Local source | `master` at `251e851a9d59d8bd0263ba1eebe08196f98f6d0b`; clean when inspected. |
 | Experiment branch | `dev/concourse-ci-lab` created from that commit. |
 | Existing CI | No `.github` workflow, Concourse pipeline, or `ts-docs/` directory was present. |
+| Source access | GitHub reports `wm-dockapps-ng` as public. Use its HTTPS URL with the built-in Concourse Git resource for the initial read-only fetch; no GitHub App key is needed. |
 | Candidate build | `wmcalc/configure.ac` checks `x11`, `xext`, `xpm`; `wmcalc/Makefile.am` declares `bin_PROGRAMS = wmcalc`. |
 | Tests | No declared `TESTS` or `check_PROGRAMS` found for `wmcalc`; first gate is a compile smoke check. |
 | tsctl | `tsctl repos check wm-dockapps-ng` returned `unknown repo key`. Enrollment tracked in [tsctl #1131](https://github.com/tacitness/tsctl/issues/1131). |
@@ -21,15 +22,16 @@
 1. Complete catalog enrollment and create the CI implementation tracking
    issue in the agreed location. Use runner `codex` and auth profile `codex2`
    for every tsctl dispatch.
-2. Implement a small repo task and pipeline through the tsctl Job. Review the
-   build image, package versions, and digest; do not install packages at task
-   runtime from an unpinned moving repository without recording the choice.
+2. Implement a small repo task and pipeline through the tsctl Job. Use the
+   public HTTPS Git source without authentication. Review the build image,
+   package versions, and digest; do not install packages at task runtime from
+   an unpinned moving repository without recording the choice.
 3. Publish a PR from `dev/concourse-ci-lab`, run an independent tsctl PR review
    Job, and resolve its findings.
-4. Restore the Fly session. Validate the candidate pipeline before applying it.
-   Keep the GitHub App PEM and Fly vars file outside Git. The existing lab demo
-   warns that `fly set-pipeline` may print resolved secret values in its diff;
-   suppress that output and inspect the exit status.
+4. Validate the candidate pipeline before applying it. Keep any future Fly
+   vars and credentials outside Git. The existing private lab demo warns that
+   `fly set-pipeline` may print resolved secret values in its diff; suppress
+   that output if a later pipeline contains credentials.
 5. Configure a uniquely named, temporary branch pipeline for the pushed PR
    branch. Run its verify job and record its fetched Git SHA and build URL. A
    local compile or Fly task against uncommitted files is diagnostic only.

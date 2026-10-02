@@ -35,8 +35,10 @@ work progresses.
 
 ## First experiment
 
-The proposed `verify-wmcalc` job should fetch a selected Git branch with the
-same repo scoped, read only GitHub App pattern used by `ts-concourse-demo`.
+The proposed `verify-wmcalc` job should fetch a selected Git branch using the
+built-in Concourse Git resource and this public repository's HTTPS URL. The
+private `ts-concourse-demo` needs a GitHub App; this public repository does not
+need a source credential for the first read-only experiment.
 Its task should run `autoreconf -fi`, `./configure`, `make`, and `make check`
 inside `wmcalc/` in a pinned Linux image with compiler, Autotools, `pkg-config`,
 and X11/Xext/Xpm development packages. `wmcalc` defines an Autotools program
@@ -60,8 +62,8 @@ authority, and this experiment does not deploy anything.
       exact PR head commit successfully.
 - [ ] The fetched Git SHA, build URL, toolchain versions, and result are recorded.
 - [ ] The main pipeline observes the merged commit, if a merge is authorized.
-- [ ] Secrets remain outside Git and the GitHub App has Contents read only
-      access limited to this repository.
+- [ ] No source credential is added for the public Git fetch; any future
+      credential remains outside Git and has reviewed scope.
 
 ## Reading order
 

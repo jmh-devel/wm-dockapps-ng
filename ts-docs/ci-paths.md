@@ -12,7 +12,7 @@ build cannot establish that every dockapp compiles or works under X11.
 | Source trigger | A Git resource checks the configured branch and exposes versions; a `get` step can trigger the job. | A workflow in `.github/workflows/` uses repository events such as `push` or `pull_request`. | A Pipeline usually lives in a `Jenkinsfile`; multibranch indexing or SCM/webhook configuration discovers changes. |
 | Execution definition | Pipeline YAML defines resources and jobs; a task YAML specifies image, inputs, and command. `fly set-pipeline` applies the pipeline. | Workflow YAML combines event, jobs, runners, and steps in the repo. GitHub loads it for matching events. | Declarative or scripted Groovy stages run on configured agents; controller, agents, and plugins are operated separately. |
 | Worker choice | `learning-lab` is a Concourse worker tag in the JMH VM. | `runs-on` selects a GitHub hosted or self hosted runner. | `agent` or `node` selects a Jenkins executor by label. |
-| Secrets | A repo scoped GitHub App key is supplied to Fly from an external vars file; Concourse stores the resolved credential. | Repository or environment secrets are injected into workflow jobs under GitHub's permission model. | Credentials are configured in Jenkins and referenced by Pipeline steps/plugins. |
+| Secrets | The public Git source needs no credential. Any later private source would require a scoped credential and an external Fly vars source; Concourse stores the resolved value. | Repository or environment secrets are injected into workflow jobs under GitHub's permission model. | Credentials are configured in Jenkins and referenced by Pipeline steps/plugins. |
 | PR experience here | A temporary branch pipeline is configured manually and its exact fetched SHA is checked. This lab does not publish a GitHub required status. | PR events and status checks are native to GitHub when the workflow and permissions are configured. | Multibranch/organization jobs and GitHub integration can provide PR builds and statuses, depending on plugins and configuration. |
 | Ownership cost | We run and secure the JMH Concourse VM, worker, tunnel, Fly target, Git resource, and App key. | Hosted runners reduce local infrastructure, but workflows and permissions still require maintenance and runner usage has a cost model. | We run and secure the controller, agents, credentials, and plugin set. |
 
@@ -35,5 +35,6 @@ which CI system is generally best.
 
 - [Concourse pipelines](https://concourse-ci.org/docs/pipelines/)
 - [Concourse tasks](https://concourse-ci.org/docs/tasks/)
+- [Concourse Git resource source configuration](https://github.com/concourse/git-resource#source-configuration)
 - [GitHub Actions workflow syntax](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax)
 - [Jenkins Pipeline](https://www.jenkins.io/doc/book/pipeline/)
