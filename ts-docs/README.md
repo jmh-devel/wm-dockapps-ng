@@ -21,8 +21,9 @@ top-level build. The first CI exercise should build one representative app,
    demo commit `f1e02d1`; this verifies the lab path, not this repository.
 5. GitHub Issues are disabled on this repository. The implementation is
    tracked in [ts-concourse-demo issue #3](https://github.com/jmh-devel/ts-concourse-demo/issues/3).
-6. Fly validated the branch build pipeline. Its `wmcalc` task still needs an
-   exact-commit Concourse run before this experiment can claim a build result.
+6. Fly validated the branch build pipeline. The first
+   [Concourse `wmcalc` build](http://127.0.0.1:8080/teams/main/pipelines/wm-dockapps-ng-pr-1/jobs/verify-wmcalc/builds/1)
+   succeeded on commit `7f69e00e2f5d47af248a2e996895bb137aeb3a50`.
 7. The documentation was published in
    [draft PR #1](https://github.com/jmh-devel/wm-dockapps-ng/pull/1).
 8. A temporary Concourse source probe validated the public HTTPS Git resource
@@ -31,8 +32,8 @@ top-level build. The first CI exercise should build one representative app,
    [build #1](http://127.0.0.1:8080/teams/main/pipelines/wm-dockapps-ng-source-probe/jobs/verify-source/builds/1)
    succeeded. This is source access evidence only; no `wmcalc` build ran.
 
-The source probe is a successful Git fetch, not a successful `wmcalc` build.
-Update this trail with the exact build commit, Fly result, and Concourse URL.
+The source probe and the `wmcalc` compile build are separate evidence. The
+branch pipeline fetches committed source before running the task.
 
 ## First experiment
 
@@ -59,9 +60,12 @@ authority, and this experiment does not deploy anything.
 - [x] Pipeline and task files are present with a pinned base image digest.
 - [x] Fly validates a temporary public Git source probe and Concourse fetches
       the exact selected branch commit.
-- [ ] Fly validates the build pipeline and a temporary branch pipeline builds the
-      exact PR head commit successfully.
-- [ ] The fetched Git SHA, build URL, toolchain versions, and result are recorded.
+- [x] Fly validates the build pipeline and a temporary branch pipeline builds
+      commit `7f69e00e2f5d47af248a2e996895bb137aeb3a50` successfully.
+- [x] The fetched Git SHA, build URL, package versions, and result are recorded.
+- [ ] The final PR head receives its own successful Concourse build after the
+      last documentation edit; its link is recorded in the PR because adding
+      that link here would create a new commit requiring another build.
 - [ ] The main pipeline observes the merged commit, if a merge is authorized.
 - [ ] No source credential is added for the public Git fetch; any future
       credential remains outside Git and has reviewed scope.

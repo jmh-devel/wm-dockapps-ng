@@ -16,6 +16,7 @@
 | Lab consumer proof | `ts-concourse-demo-main/verify #2` succeeded on 2026-10-02, fetched demo commit `f1e02d1`, and ran five tests plus its Markdown link check. [Local lab build](http://127.0.0.1:8080/teams/main/pipelines/ts-concourse-demo-main/jobs/verify/builds/2). This does not validate `wm-dockapps-ng`. |
 | Discarded tsctl path | A tsctl dry run and queue check exposed separate tsctl issues. They do not gate this Concourse experiment and no tsctl Job was dispatched. |
 | Target source probe | `fly validate-pipeline` returned `looks good`; temporary pipeline `wm-dockapps-ng-source-probe/verify-source #1` succeeded on `concourse-lab-worker`. Resource version `ref` is `ff7e4b7286cb307161ccc47a77f4adea63d81bff`, matching the pushed branch at probe time. [Local lab build](http://127.0.0.1:8080/teams/main/pipelines/wm-dockapps-ng-source-probe/jobs/verify-source/builds/1). No app was compiled. |
+| First `wmcalc` build | `fly validate-pipeline -c ci/pipeline.yml -v git_branch=dev/concourse-ci-lab` returned `looks good`. Temporary branch pipeline `wm-dockapps-ng-pr-1/verify-wmcalc #1` succeeded on `concourse-lab-worker` for resource `ref` `7f69e00e2f5d47af248a2e996895bb137aeb3a50`. [Local lab build](http://127.0.0.1:8080/teams/main/pipelines/wm-dockapps-ng-pr-1/jobs/verify-wmcalc/builds/1). |
 
 ## Source probe procedure and evidence
 
@@ -78,12 +79,54 @@ build pipeline supersedes it; deleting a pipeline removes its lab build history.
    commit. Pause or retire temporary branch pipelines deliberately, preserving
    build links in this log.
 
+## First `wmcalc` build result
+
+The operator applied [the versioned pipeline](../ci/pipeline.yml) as
+`wm-dockapps-ng-pr-1` with `-v git_branch=dev/concourse-ci-lab`, unpaused it,
+and triggered `verify-wmcalc`. Build #1 succeeded on 2026-10-02 in 2m10s.
+
+```bash
+fly-concourse-lab -t lab validate-pipeline -c ci/pipeline.yml \
+  -v git_branch=dev/concourse-ci-lab
+fly-concourse-lab -t lab set-pipeline -p wm-dockapps-ng-pr-1 \
+  -c ci/pipeline.yml -v git_branch=dev/concourse-ci-lab -n
+fly-concourse-lab -t lab unpause-pipeline -p wm-dockapps-ng-pr-1
+fly-concourse-lab -t lab trigger-job \
+  -j wm-dockapps-ng-pr-1/verify-wmcalc -w
+fly-concourse-lab -t lab resource-versions \
+  -r wm-dockapps-ng-pr-1/source -c 1 --json
+```
+
+Concourse reported source version
+`7f69e00e2f5d47af248a2e996895bb137aeb3a50`, matching the pushed branch
+at the time of that build. The task fetched the Debian image by digest
+`sha256:3783cc01769c7b2b1b83a5c5ad96c815348e28ed7da68e2e3687004faa906251`.
+
+The task log reported these package versions:
+
+| Package | Version |
+| --- | --- |
+| autoconf | `2.71-3` |
+| automake | `1:1.16.5-1.3` |
+| build-essential | `12.9` |
+| pkg-config | `1.8.1-1` |
+| libx11-dev | `2:1.8.4-2+deb12u2` |
+| libxext-dev | `2:1.3.4-1+b1` |
+| libxpm-dev | `1:3.5.12-1.1+deb12u1` |
+
+`autoreconf -fi`, `CFLAGS=-fcommon ./configure`, `make`, and `make check`
+succeeded. The log says `make: Nothing to be done for 'check'.` The executable
+existence check also passed. This is compile evidence, with no unit tests or
+GUI runtime test. Apt resolved packages from current Bookworm repositories at
+build time; the base image digest is pinned but the Apt package set can drift.
+
 ## Evidence to append
 
 | Date | PR / commit | Pipeline / build | Result | Notes |
 | --- | --- | --- | --- | --- |
 | 2026-10-02 | [Draft PR #1](https://github.com/jmh-devel/wm-dockapps-ng/pull/1), docs commit `901c9d2` | Demo `ts-concourse-demo-main/verify #2` | Demo passed | Verified the existing lab before target work. |
 | 2026-10-02 | Branch commit `ff7e4b7286cb307161ccc47a77f4adea63d81bff` | `wm-dockapps-ng-source-probe/verify-source #1` | Source fetch passed | Public HTTPS Git resource on `learning-lab`; no compile task. |
+| 2026-10-02 | Branch commit `7f69e00e2f5d47af248a2e996895bb137aeb3a50` | [`wm-dockapps-ng-pr-1/verify-wmcalc #1`](http://127.0.0.1:8080/teams/main/pipelines/wm-dockapps-ng-pr-1/jobs/verify-wmcalc/builds/1) | Compile smoke passed | Autotools and X11 dependencies succeeded; `make check` had no tests. |
 
 ## Safety boundaries
 
