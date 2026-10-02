@@ -10,12 +10,11 @@
 | Source access | GitHub reports `wm-dockapps-ng` as public. Use its HTTPS URL with the built-in Concourse Git resource for the initial read-only fetch; no GitHub App key is needed. |
 | Candidate build | `wmcalc/configure.ac` checks `x11`, `xext`, `xpm`; `wmcalc/Makefile.am` declares `bin_PROGRAMS = wmcalc`. |
 | Tests | No declared `TESTS` or `check_PROGRAMS` found for `wmcalc`; first gate is a compile smoke check. |
-| tsctl | `tsctl repos check wm-dockapps-ng` returned `unknown repo key`. Enrollment tracked in [tsctl #1131](https://github.com/tacitness/tsctl/issues/1131). |
+| Corrected assumption | I initially treated tsctl enrollment as a prerequisite. Joel clarified that this learning experiment should run on Concourse. [tsctl #1131](https://github.com/tacitness/tsctl/issues/1131) was closed as unnecessary. |
 | GitHub issue tracker | Disabled for this public repository; implementation tracked in [ts-concourse-demo #3](https://github.com/jmh-devel/ts-concourse-demo/issues/3). |
 | Fly | Login restored 2026-10-02; `fly-concourse-lab -t lab status` reports success and the `learning-lab` worker is running. |
 | Lab consumer proof | `ts-concourse-demo-main/verify #2` succeeded on 2026-10-02, fetched demo commit `f1e02d1`, and ran five tests plus its Markdown link check. [Local lab build](http://127.0.0.1:8080/teams/main/pipelines/ts-concourse-demo-main/jobs/verify/builds/2). This does not validate `wm-dockapps-ng`. |
-| tsctl auth dry run | `tsctl agent dispatch tsctl --runner codex --auth-profile codex2 --issue 1131 --mode implement --dry-run` summarized `codex2` but rendered `codex` metadata and legacy Secret selection. [tsctl #1123](https://github.com/tacitness/tsctl/issues/1123) tracks the defect. Live dispatch identity is unproven. |
-| Managed issue queue | `tsctl agent queue ls` reports no approved server configured. This shell has neither `TSCTL_SERVER_URL` nor `TSCTL_API_KEY`; issue dispatch requires both. Do not place the API key in Git or a command argument. |
+| Discarded tsctl path | A tsctl dry run and queue check exposed separate tsctl issues. They do not gate this Concourse experiment and no tsctl Job was dispatched. |
 | Target source probe | `fly validate-pipeline` returned `looks good`; temporary pipeline `wm-dockapps-ng-source-probe/verify-source #1` succeeded on `concourse-lab-worker`. Resource version `ref` is `ff7e4b7286cb307161ccc47a77f4adea63d81bff`, matching the pushed branch at probe time. [Local lab build](http://127.0.0.1:8080/teams/main/pipelines/wm-dockapps-ng-source-probe/jobs/verify-source/builds/1). No app was compiled. |
 
 ## Source probe procedure and evidence
@@ -59,36 +58,31 @@ Fly validation returned `looks good`. The job succeeded on 2026-10-02 and
 the Git resource version reported `ref` =
 `ff7e4b7286cb307161ccc47a77f4adea63d81bff`. The temporary pipeline was
 paused after the successful probe and remains present so its build history is
-visible without continued checks. Retire it deliberately after the governed
+visible without continued checks. Retire it deliberately after the versioned
 build pipeline supersedes it; deleting a pipeline removes its lab build history.
 
-## Governed sequence
+## Concourse build sequence
 
-1. Complete catalog enrollment and create the CI implementation tracking
-   issue in the agreed location. Use runner `codex` and auth profile `codex2`
-   for every tsctl dispatch.
-2. Implement a small repo task and pipeline through the tsctl Job. Use the
-   public HTTPS Git source without authentication. Review the build image,
-   package versions, and digest; do not install packages at task runtime from
-   an unpinned moving repository without recording the choice.
-3. Publish a PR from `dev/concourse-ci-lab`, run an independent tsctl PR review
-   Job, and resolve its findings.
-4. Validate the candidate pipeline before applying it. Keep any future Fly
-   vars and credentials outside Git. The existing private lab demo warns that
-   `fly set-pipeline` may print resolved secret values in its diff; suppress
-   that output if a later pipeline contains credentials.
-5. Configure a uniquely named, temporary branch pipeline for the pushed PR
-   branch. Run its verify job and record its fetched Git SHA and build URL. A
-   local compile or Fly task against uncommitted files is diagnostic only.
-6. After exact-head checks, independent review, and an authorized merge,
-   observe a build for the merged `master` commit. Then retire the temporary
-   branch pipeline deliberately, preserving the build link in this log.
+1. Edit the versioned [pipeline](../ci/pipeline.yml) and
+   [task](../ci/tasks/verify-wmcalc.yml) on `dev/concourse-ci-lab`. Use the
+   public HTTPS Git source without authentication. The Debian base image is
+   pinned by digest; package versions installed by Apt at task runtime are
+   printed in the build log. This is a learning tradeoff, not a fully
+   reproducible toolchain image.
+2. Validate the pipeline with Fly and push the branch. Configure a uniquely
+   named temporary branch pipeline with `-v git_branch=dev/concourse-ci-lab`.
+   Run `verify-wmcalc` and record its fetched Git SHA and build URL. Concourse
+   performs all compilation and `make check` work on the `learning-lab` worker.
+3. Review the exact PR diff and Concourse build result. After an authorized
+   merge, configure the `master` pipeline and observe a build for the merged
+   commit. Pause or retire temporary branch pipelines deliberately, preserving
+   build links in this log.
 
 ## Evidence to append
 
 | Date | PR / commit | Pipeline / build | Result | Notes |
 | --- | --- | --- | --- | --- |
-| 2026-10-02 | [Draft PR #1](https://github.com/jmh-devel/wm-dockapps-ng/pull/1), docs commit `901c9d2` | Demo `ts-concourse-demo-main/verify #2` | Demo passed | Target catalog, profile dry run, and managed queue access pending. |
+| 2026-10-02 | [Draft PR #1](https://github.com/jmh-devel/wm-dockapps-ng/pull/1), docs commit `901c9d2` | Demo `ts-concourse-demo-main/verify #2` | Demo passed | Verified the existing lab before target work. |
 | 2026-10-02 | Branch commit `ff7e4b7286cb307161ccc47a77f4adea63d81bff` | `wm-dockapps-ng-source-probe/verify-source #1` | Source fetch passed | Public HTTPS Git resource on `learning-lab`; no compile task. |
 
 ## Safety boundaries
