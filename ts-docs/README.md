@@ -28,6 +28,11 @@ top-level build. The first CI exercise should build one representative app,
    neither is configured in the current shell.
 7. The documentation was published in
    [draft PR #1](https://github.com/jmh-devel/wm-dockapps-ng/pull/1).
+8. A temporary Concourse source probe validated the public HTTPS Git resource
+   and fetched branch commit `ff7e4b7286cb307161ccc47a77f4adea63d81bff`
+   on the `learning-lab` worker. Its
+   [build #1](http://127.0.0.1:8080/teams/main/pipelines/wm-dockapps-ng-source-probe/jobs/verify-source/builds/1)
+   succeeded. This is source access evidence only; no `wmcalc` build ran.
 
 These are observed states, not successful CI evidence. Update this list with
 the PR, exact commit, Fly validation result, and Concourse build URL as the
@@ -58,7 +63,9 @@ authority, and this experiment does not deploy anything.
 - [x] A draft PR is linked here.
 - [ ] The governed Job and independent review are linked here.
 - [ ] Pipeline and task files are reviewed with a pinned build image digest.
-- [ ] Fly validates the pipeline and a temporary branch pipeline builds the
+- [x] Fly validates a temporary public Git source probe and Concourse fetches
+      the exact selected branch commit.
+- [ ] Fly validates the build pipeline and a temporary branch pipeline builds the
       exact PR head commit successfully.
 - [ ] The fetched Git SHA, build URL, toolchain versions, and result are recorded.
 - [ ] The main pipeline observes the merged commit, if a merge is authorized.

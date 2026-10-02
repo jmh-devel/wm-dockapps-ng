@@ -16,6 +16,51 @@
 | Lab consumer proof | `ts-concourse-demo-main/verify #2` succeeded on 2026-10-02, fetched demo commit `f1e02d1`, and ran five tests plus its Markdown link check. [Local lab build](http://127.0.0.1:8080/teams/main/pipelines/ts-concourse-demo-main/jobs/verify/builds/2). This does not validate `wm-dockapps-ng`. |
 | tsctl auth dry run | `tsctl agent dispatch tsctl --runner codex --auth-profile codex2 --issue 1131 --mode implement --dry-run` summarized `codex2` but rendered `codex` metadata and legacy Secret selection. [tsctl #1123](https://github.com/tacitness/tsctl/issues/1123) tracks the defect. Live dispatch identity is unproven. |
 | Managed issue queue | `tsctl agent queue ls` reports no approved server configured. This shell has neither `TSCTL_SERVER_URL` nor `TSCTL_API_KEY`; issue dispatch requires both. Do not place the API key in Git or a command argument. |
+| Target source probe | `fly validate-pipeline` returned `looks good`; temporary pipeline `wm-dockapps-ng-source-probe/verify-source #1` succeeded on `concourse-lab-worker`. Resource version `ref` is `ff7e4b7286cb307161ccc47a77f4adea63d81bff`, matching the pushed branch at probe time. [Local lab build](http://127.0.0.1:8080/teams/main/pipelines/wm-dockapps-ng-source-probe/jobs/verify-source/builds/1). No app was compiled. |
+
+## Source probe procedure and evidence
+
+This temporary operator pipeline is applied in the lab, not yet versioned as
+the repository's CI pipeline. It checks whether Concourse can see the public
+branch and records the fetched commit without adding a source credential:
+
+```yaml
+resources:
+  - name: source
+    type: git
+    tags: [learning-lab]
+    check_every: 1m
+    source:
+      uri: https://github.com/jmh-devel/wm-dockapps-ng.git
+      branch: dev/concourse-ci-lab
+
+jobs:
+  - name: verify-source
+    plan:
+      - get: source
+        tags: [learning-lab]
+```
+
+The operator saved this YAML outside the checkout at
+`/tmp/wm-dockapps-ng-source-probe.yml`, then ran:
+
+```bash
+fly-concourse-lab -t lab validate-pipeline -c /tmp/wm-dockapps-ng-source-probe.yml
+fly-concourse-lab -t lab set-pipeline -p wm-dockapps-ng-source-probe \
+  -c /tmp/wm-dockapps-ng-source-probe.yml -n
+fly-concourse-lab -t lab unpause-pipeline -p wm-dockapps-ng-source-probe
+fly-concourse-lab -t lab trigger-job \
+  -j wm-dockapps-ng-source-probe/verify-source -w
+fly-concourse-lab -t lab resource-versions \
+  -r wm-dockapps-ng-source-probe/source -c 3 --json
+```
+
+Fly validation returned `looks good`. The job succeeded on 2026-10-02 and
+the Git resource version reported `ref` =
+`ff7e4b7286cb307161ccc47a77f4adea63d81bff`. The temporary pipeline is
+still present so its build history remains visible. Retire it deliberately
+after the governed build pipeline supersedes it; deleting a pipeline removes
+its lab build history.
 
 ## Governed sequence
 
@@ -44,6 +89,7 @@
 | Date | PR / commit | Pipeline / build | Result | Notes |
 | --- | --- | --- | --- | --- |
 | 2026-10-02 | [Draft PR #1](https://github.com/jmh-devel/wm-dockapps-ng/pull/1), docs commit `901c9d2` | Demo `ts-concourse-demo-main/verify #2` | Demo passed | Target catalog, profile dry run, and managed queue access pending. |
+| 2026-10-02 | Branch commit `ff7e4b7286cb307161ccc47a77f4adea63d81bff` | `wm-dockapps-ng-source-probe/verify-source #1` | Source fetch passed | Public HTTPS Git resource on `learning-lab`; no compile task. |
 
 ## Safety boundaries
 
