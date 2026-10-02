@@ -1,0 +1,64 @@
+# Concourse CI learning trail
+
+This directory records the first CI experiment for `jmh-devel/wm-dockapps-ng`.
+The working branch is `dev/concourse-ci-lab`, based on `master` commit
+`251e851a9d59d8bd0263ba1eebe08196f98f6d0b` (2026-04-12). This is a
+public collection of independent, mostly Autotools based C dockapps, not one
+top-level build. The first CI exercise should build one representative app,
+`wmcalc`, before expanding coverage.
+
+## Current status (2026-10-02)
+
+1. Inspected the repository and the existing `ts-concourse-demo` lab pipeline.
+2. Created `dev/concourse-ci-lab` in the local clone. No pipeline has been
+   applied and no Concourse build has run for this repository.
+3. Opened [tsctl issue #1131](https://github.com/tacitness/tsctl/issues/1131)
+   for catalog enrollment. `tsctl repos check wm-dockapps-ng` currently reports
+   an unknown repo key, so a governed implementation Job cannot start yet.
+4. The saved Fly session is unauthorized. The lab connection and credentials
+   must be restored before pipeline validation or a branch build.
+5. GitHub Issues are disabled on this repository. The implementation is
+   tracked in [ts-concourse-demo issue #3](https://github.com/jmh-devel/ts-concourse-demo/issues/3).
+6. An explicit `codex2` issue-dispatch dry run summarized `codex2` but rendered
+   a `codex` Job. [tsctl #1123](https://github.com/tacitness/tsctl/issues/1123)
+   tracks this dry-run defect. A live profile mismatch has not been proven;
+   dispatch is held until profile selection can be verified.
+
+These are observed states, not successful CI evidence. Update this list with
+the PR, exact commit, Fly validation result, and Concourse build URL as the
+work progresses.
+
+## First experiment
+
+The proposed `verify-wmcalc` job should fetch a selected Git branch with the
+same repo scoped, read only GitHub App pattern used by `ts-concourse-demo`.
+Its task should run `autoreconf -fi`, `./configure`, `make`, and `make check`
+inside `wmcalc/` in a pinned Linux image with compiler, Autotools, `pkg-config`,
+and X11/Xext/Xpm development packages. `wmcalc` defines an Autotools program
+and those three `pkg-config` dependencies. It has no declared test suite, so
+`make check` is initially a build smoke check; do not call it a functional
+test. A later change can add focused tests.
+
+The job should select the lab's `learning-lab` Concourse worker tag for both
+resource and task steps. This tag selects a Concourse worker inside JMH's lab
+VM. It is unrelated to Kubernetes Node labels. The lab has no deployment
+authority, and this experiment does not deploy anything.
+
+## Acceptance record
+
+- [ ] Enrollment is published and a `codex` / `codex2` tsctl Job can be admitted.
+- [x] A CI implementation issue is linked here.
+- [ ] The governed Job, PR, and independent review are linked here.
+- [ ] Pipeline and task files are reviewed with a pinned build image digest.
+- [ ] Fly validates the pipeline and a temporary branch pipeline builds the
+      exact PR head commit successfully.
+- [ ] The fetched Git SHA, build URL, toolchain versions, and result are recorded.
+- [ ] The main pipeline observes the merged commit, if a merge is authorized.
+- [ ] Secrets remain outside Git and the GitHub App has Contents read only
+      access limited to this repository.
+
+## Reading order
+
+- [Decision and CI system comparison](ci-paths.md)
+- [Operator log and next steps](concourse-runbook.md)
+- [Existing lab demo](https://github.com/jmh-devel/ts-concourse-demo)
