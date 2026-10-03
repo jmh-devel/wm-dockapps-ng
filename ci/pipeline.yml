@@ -1,0 +1,20 @@
+# Select master for the long-lived pipeline and a pushed branch for PR testing.
+resources:
+  - name: source
+    type: git
+    tags: [learning-lab]
+    check_every: 1m
+    source:
+      uri: https://github.com/jmh-devel/wm-dockapps-ng.git
+      branch: ((git_branch))
+
+jobs:
+  - name: verify-wmcalc
+    serial: true
+    plan:
+      - get: source
+        trigger: true
+        tags: [learning-lab]
+      - task: build-wmcalc
+        tags: [learning-lab]
+        file: source/ci/tasks/verify-wmcalc.yml
