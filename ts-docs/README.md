@@ -74,4 +74,5 @@ authority, and this experiment does not deploy anything.
 
 - [Decision and CI system comparison](ci-paths.md)
 - [Operator log and next steps](concourse-runbook.md)
+- [Concourse web UI tour](wui-tour.md)
 - [Existing lab demo](https://github.com/jmh-devel/ts-concourse-demo)
