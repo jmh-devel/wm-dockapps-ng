@@ -1,5 +1,13 @@
 # dockapps
 
+## Concourse CI learning experiment
+
+The `dev/concourse-ci-lab` branch contains a small Concourse pipeline that
+builds `wmcalc` on the JMH lab worker. Start with the
+[learning trail](ts-docs/README.md) for the exact scope, operator log, and
+comparison with GitHub Actions and Jenkins. This is a build smoke check for
+one dockapp, not a test of the full collection or a deployment.
+
 Dockapps are small tiles that easily fit into a dock in your window manager, but each one could be considered a complete configuration application, amusement, monitoring tool, or a combination of features.
 
 Each tile is generally larger than a tray icon but smaller than an application, so they offer a way to do detailed operations while staying out of the way.

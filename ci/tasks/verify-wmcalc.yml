@@ -1,0 +1,34 @@
+platform: linux
+
+# Debian base is pinned by digest. Apt packages are resolved at build time;
+# their exact versions are printed in the build log for this first experiment.
+image_resource:
+  type: registry-image
+  source:
+    repository: debian
+    tag: bookworm-slim
+  version:
+    digest: sha256:3783cc01769c7b2b1b83a5c5ad96c815348e28ed7da68e2e3687004faa906251
+
+inputs:
+  - name: source
+
+run:
+  path: sh
+  args:
+    - -ec
+    - |
+      export DEBIAN_FRONTEND=noninteractive
+      apt-get update
+      apt-get install -y --no-install-recommends \
+        autoconf automake build-essential pkg-config \
+        libx11-dev libxext-dev libxpm-dev
+      dpkg-query -W -f='${binary:Package} ${Version}\n' \
+        autoconf automake build-essential pkg-config \
+        libx11-dev libxext-dev libxpm-dev
+      cd source/wmcalc
+      autoreconf -fi
+      CFLAGS=-fcommon ./configure
+      make
+      make check
+      test -x wmcalc
